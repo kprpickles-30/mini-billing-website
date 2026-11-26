@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPR Pickles Billing</title>
+<link rel="icon" href="logo.png">
+<style>
+:root{--t:#B85C38;--cream:#FFF8ED;--ink:#292522;--beige:#E8DCCB;--mut:#6B625B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.4 "Segoe UI",Arial,sans-serif;padding-bottom:76px}
+header{background:var(--ink);color:var(--cream);display:flex;align-items:center;gap:12px;padding:10px 16px}
+header img{height:42px;width:auto;border-radius:6px}
+header h1{font:700 21px Georgia,serif;margin:0;flex:1}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{background:var(--t);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.5}
+.btn.alt{background:#fff;color:var(--t);border:1px solid var(--t)}
+.btn.sm{padding:6px 10px}
+header .btn{background:transparent;border:1px solid #8a7e72;color:var(--cream)}
+.lnk{background:none;border:0;color:var(--t);cursor:pointer;font-weight:600;padding:4px}
+input,select,textarea{border:1px solid var(--beige);border-radius:8px;padding:8px 10px;background:#fff;width:100%}
+:focus-visible{outline:2px solid var(--t);outline-offset:2px}
+.page{max-width:1180px;margin:0 auto;padding:16px;display:grid;gap:18px;align-items:start}
+@media(min-width:900px){.page{grid-template-columns:1fr 380px}#order{position:sticky;top:12px}.mbar{display:none!important}body{padding-bottom:0}}
+.card{background:#fff;border:1px solid var(--beige);border-radius:10px;padding:14px}
+.tools{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tools input{flex:1;min-width:150px}
+.chips button{border:1px solid var(--beige);background:#fff;border-radius:20px;padding:7px 14px;cursor:pointer}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.prod{background:#fff;border:1px solid var(--beige);border-radius:10px;padding:12px}
+.prod h3{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+.dot{width:13px;height:13px;border:2px solid;border-radius:3px;display:inline-grid;place-items:center;flex:none}
+.dot::after{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.v{color:#2e7d32}.n{color:#b3261e}
+.packs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pack{background:var(--cream);border:1px solid var(--beige);border-radius:8px;padding:7px 4px;cursor:pointer;line-height:1.2}
+.pack:hover{border-color:var(--t)}
+.pack b{display:block}.pack span{color:var(--t);font-weight:700}
+#order h2{margin:0 0 10px;font:700 18px Georgia,serif}
+.li{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-bottom:1px solid var(--beige)}
+.li .q{display:flex;align-items:center;gap:6px}
+.li .q button{width:28px;height:28px;border:1px solid var(--beige);background:#fff;border-radius:6px;cursor:pointer}
+.mut{color:var(--mut);font-size:13px}.empty{color:var(--mut);padding:14px 0}
+.f{display:grid;gap:8px;margin:12px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tot div{display:flex;justify-content:space-between;padding:3px 0}
+.tot .g{font-size:20px;font-weight:700;border-top:1px solid var(--beige);margin-top:4px;padding-top:8px}
+.acts{display:flex;gap:8px;margin-top:12px}.acts .btn:first-child{flex:1}
+.mbar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--cream);display:flex;justify-content:space-between;align-items:center;padding:10px 16px}
+dialog{border:0;border-radius:12px;padding:0;width:min(580px,96vw);max-height:92vh}
+dialog::backdrop{background:rgba(41,37,34,.55)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--beige);position:sticky;top:0;background:#fff}
+.dh h2{margin:0;font:700 18px Georgia,serif}
+#dbody{padding:16px}
+#dbody img.bill{width:100%;display:block;border:1px solid var(--beige)}
+.row{display:flex;gap:8px;align-items:center;margin:6px 0}
+.sz{width:90px;flex:none}
+.mp{border:1px solid var(--beige);border-radius:10px;padding:10px;margin-top:12px}
+.mph{display:flex;justify-content:space-between}
+.hr{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--beige);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left}
+.hr:hover{background:var(--cream)}
+#toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;z-index:99;display:none;max-width:90vw}
+#toast.err{background:#b3261e}
+#host{position:fixed;left:-10000px;top:0}
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.png" alt="KPR Pickles">
+  <h1>KPR Pickles</h1>
+  <button class="btn sm" id="bHist">History</button>
+  <button class="btn sm" id="bProd">Products</button>
+</header>
+
+<main class="page">
+  <section>
+    <div class="tools">
+      <input id="search" type="search" placeholder="Search pickles">
+      <div class="chips" id="chips">
+        <button data-c="all" class="on">All</button><button data-c="veg">Veg</button><button data-c="nonveg">Non-veg</button>
+      </div>
+    </div>
+    <div class="grid" id="prod"><div class="empty">Loading products…</div></div>
+  </section>
+
+  <aside id="order" class="card">
+    <h2>Current order</h2>
+    <div id="items"></div>
+    <div class="f">
+      <div class="two">
+        <select id="dt"><option value="percent">Discount %</option><option value="amount">Discount ₹</option></select>
+        <input id="dv" type="number" min="0" placeholder="0">
+      </div>
+      <input id="cn" placeholder="Customer name">
+      <input id="cp" type="tel" placeholder="Phone number">
+      <select id="pay"><option>Cash</option><option>UPI</option><option>Card</option><option>Credit</option></select>
+      <textarea id="nt" rows="2" placeholder="Notes"></textarea>
+    </div>
+    <div class="tot" id="tot"></div>
+    <div class="acts">
+      <button class="btn" id="gen">Generate bill</button>
+      <button class="btn alt" id="clr">Clear</button>
+    </div>
+  </aside>
+</main>
+
+<div class="mbar"><div><div class="mut" style="color:#E8DCCB" id="mc">0 items</div><b id="mt">₹0</b></div>
+  <button class="btn" id="mv">View order</button></div>
+
+<dialog id="dlg"><div class="dh"><h2 id="dtitle"></h2><button class="lnk" id="dx">Close</button></div><div id="dbody"></div></dialog>
+<div id="host"></div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ====== 1. PASTE YOUR SUPABASE DETAILS HERE ======
+const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL';
+const SUPABASE_KEY = 'PASTE_YOUR_ANON_KEY';
+// =================================================
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rupee = n => '₹' + Number(n || 0).toLocaleString('en-IN', {maximumFractionDigits: 2});
+const fdate = d => new Date(d).toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const dot = c => `<span class="dot ${c === 'veg' ? 'v' : 'n'}" title="${c === 'veg' ? 'Veg' : 'Non-veg'}"></span>`;
+
+let sb, products = [], items = [], cat = 'all', hist = [], cur = null, curImg = null;
+
+function toast(msg, err) {
+  const t = $('#toast');
+  t.textContent = msg; t.className = err ? 'err' : ''; t.style.display = 'block';
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = 'none', err ? 6000 : 2500);
+}
+const fail = e => { console.error(e); toast('Error: ' + (e.message || e), true); };
+
+/* ---------- products ---------- */
+async function loadProducts() {
+  const { data, error } = await sb.from('products').select('*, packs(*)').order('sort_order');
+  if (error) return fail(error);
+  products = data.map(p => ({ ...p, packs: p.packs.sort((a, b) => a.sort_order - b.sort_order) }));
+  renderProducts();
+}
+
+function renderProducts() {
+  const q = $('#search').value.toLowerCase().trim();
+  const list = products.filter(p => (cat === 'all' || p.category === cat) && p.name.toLowerCase().includes(q));
+  $('#prod').innerHTML = list.length ? list.map(p => `
+    <div class="prod"><h3>${dot(p.category)}${esc(p.name)}</h3>
+    <div class="packs">${p.packs.map(k => `<button class="pack" data-add="${esc(p.id)}|${esc(k.id)}"><b>${esc(k.size)}</b><span>${rupee(k.price)}</span></button>`).join('')}</div></div>`).join('')
+    : '<div class="empty">No pickles match. Try another search, or add one under Products.</div>';
+}
+
+$('#prod').onclick = e => {
+  const b = e.target.closest('[data-add]'); if (!b) return;
+  const [pid, kid] = b.dataset.add.split('|');
+  const p = products.find(x => x.id === pid), k = p.packs.find(x => x.id === kid);
+  const f = items.find(i => i.key === kid);
+  if (f) f.qty++; else items.push({ key: kid, name: p.name, size: k.size, price: Number(k.price), qty: 1 });
+  renderOrder();
+};
+$('#search').oninput = renderProducts;
+$('#chips').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  cat = b.dataset.c;
+  document.querySelectorAll('#chips button').forEach(x => x.classList.toggle('on', x === b));
+  renderProducts();
+};
+
+/* ---------- order ---------- */
+function totals() {
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const v = Number($('#dv').value) || 0, pct = $('#dt').value === 'percent';
+  let d = pct ? subtotal * Math.min(v, 100) / 100 : v;
+  d = Math.round(Math.min(Math.max(d, 0), subtotal) * 100) / 100;
+  return { subtotal, discountAmount: d, total: subtotal - d };
+}
+const discLabel = () => { const v = Number($('#dv').value) || 0; return !v ? '' : $('#dt').value === 'percent' ? `Discount (${v}%)` : 'Discount'; };
+
+function renderOrder() {
+  $('#items').innerHTML = items.length ? items.map((i, n) => `
+    <div class="li"><div><b>${esc(i.name)}</b> <span class="mut">(${esc(i.size)}) · ${rupee(i.price)}</span></div>
+    <b>${rupee(i.price * i.qty)}</b>
+    <div class="q"><button data-q="${n}|-1" aria-label="Less">−</button><span>${i.qty}</span><button data-q="${n}|1" aria-label="More">+</button></div>
+    <button class="lnk" data-rm="${n}" style="justify-self:end">Remove</button></div>`).join('')
+    : '<div class="empty">No items yet. Tap a pack size to add it.</div>';
+  const t = totals();
+  $('#tot').innerHTML = `<div><span>Subtotal</span><span>${rupee(t.subtotal)}</span></div>` +
+    (t.discountAmount ? `<div><span>${esc(discLabel())}</span><span>− ${rupee(t.discountAmount)}</span></div>` : '') +
+    `<div class="g"><span>Total</span><span>${rupee(t.total)}</span></div>`;
+  const c = items.reduce((n, i) => n + i.qty, 0);
+  $('#mc').textContent = c + (c === 1 ? ' item' : ' items'); $('#mt').textContent = rupee(t.total);
+}
+$('#items').onclick = e => {
+  const q = e.target.closest('[data-q]'), r = e.target.closest('[data-rm]');
+  if (q) { const [n, d] = q.dataset.q.split('|'); items[n].qty += Number(d); if (items[n].qty < 1) items.splice(n, 1); }
+  else if (r) items.splice(r.dataset.rm, 1); else return;
+  renderOrder();
+};
+$('#dv').oninput = $('#dt').onchange = renderOrder;
+$('#mv').onclick = () => $('#order').scrollIntoView({ behavior: 'smooth' });
+
+function clearOrder() {
+  items = []; ['#dv', '#cn', '#cp', '#nt'].forEach(s => $(s).value = '');
+  $('#dt').value = 'percent'; $('#pay').value = 'Cash'; renderOrder();
+}
+$('#clr').onclick = () => { if (!items.length || confirm('Clear this order?')) clearOrder(); };
+
+$('#gen').onclick = async () => {
+  if (!sb) return toast('Connect Supabase first (see top of index.html)', true);
+  if (!items.length) return toast('Add at least one item first', true);
+  const t = totals(), btn = $('#gen'); btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const { data: b, error } = await sb.from('bills').insert({
+      customer_name: $('#cn').value.trim(), customer_phone: $('#cp').value.trim(), notes: $('#nt').value.trim(),
+      payment: $('#pay').value, discount_label: discLabel(), subtotal: t.subtotal, discount_amount: t.discountAmount, total: t.total
+    }).select().single();
+    if (error) throw error;
+    const r = await sb.from('bill_items').insert(items.map(i => ({ bill_id: b.id, name: i.name, size: i.size, price: i.price, qty: i.qty })));
+    if (r.error) throw r.error;
+    showBill({ billNo: b.bill_no, date: b.bill_date, customer: { name: b.customer_name, phone: b.customer_phone }, notes: b.notes,
+      payment: b.payment, discountLabel: b.discount_label, items: items.map(i => ({ ...i })), ...t }, true);
+  } catch (e) { fail(e); }
+  btn.disabled = false; btn.textContent = 'Generate bill';
+};
+
+/* ---------- dialog + bill image ---------- */
+function openDlg(title, html) {
+  $('#dtitle').textContent = title; $('#dbody').innerHTML = html;
+  if (!$('#dlg').open) $('#dlg').showModal();
+}
+$('#dx').onclick = () => $('#dlg').close();
+
+function billHTML(b) {
+  const L = '1px solid #000';
+  const th = a => `text-align:${a};padding:6px 4px;font-size:12px;font-weight:700;border-top:${L};border-bottom:${L}`;
+  const td = a => `text-align:${a};padding:6px 4px;font-size:13px;border-bottom:1px dashed #000;vertical-align:top`;
+  const row = (a, c, s, w) => `<div style="display:flex;justify-content:space-between;padding:3px 4px;font-size:${s || 13}px;font-weight:${w || 400}"><span>${a}</span><span>${c}</span></div>`;
+  return `<div style="width:480px;background:#fff;color:#000;font-family:Arial,sans-serif;padding:24px">
+    <div style="text-align:center"><img src="logo-bw.png" style="width:110px;height:auto" alt="">
+    <div style="font-size:24px;font-weight:700;margin-top:4px">KPR Pickles</div><div style="font-size:13px">Homemade with Love</div></div>
+    <div style="border-top:${L};margin:14px 0 10px"></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px"><div>Bill No: <b>${esc(b.billNo)}</b></div><div>Date: <b>${fdate(b.date)}</b></div></div>
+    ${b.customer.name || b.customer.phone ? `<div style="margin-top:8px;font-size:13px;line-height:1.5">${b.customer.name ? `<div>Customer: <b>${esc(b.customer.name)}</b></div>` : ''}${b.customer.phone ? `<div>Phone: <b>${esc(b.customer.phone)}</b></div>` : ''}</div>` : ''}
+    <table style="width:100%;border-collapse:collapse;margin-top:14px"><thead><tr><th style="${th('left')}">Item</th><th style="${th('center')}">Qty</th><th style="${th('right')}">Price</th><th style="${th('right')}">Amount</th></tr></thead><tbody>
+    ${b.items.map(i => `<tr><td style="${td('left')}">${esc(i.name)} (${esc(i.size)})</td><td style="${td('center')}">${i.qty}</td><td style="${td('right')}">${rupee(i.price)}</td><td style="${td('right')}">${rupee(i.price * i.qty)}</td></tr>`).join('')}
+    </tbody></table>
+    <div style="margin-top:10px">${row('Subtotal', rupee(b.subtotal))}${b.discountAmount ? row(esc(b.discountLabel || 'Discount'), '− ' + rupee(b.discountAmount)) : ''}
+    <div style="border-top:${L};margin-top:4px">${row('Total', rupee(b.total), 17, 700)}</div></div>
+    <div style="margin-top:8px;font-size:13px">Payment: <b>${esc(b.payment)}</b></div>
+    ${b.notes ? `<div style="margin-top:6px;font-size:12px">Notes: ${esc(b.notes)}</div>` : ''}
+    <div style="border-top:${L};margin-top:14px;padding-top:10px;text-align:center;font-size:13px">Thank you! Please visit again.</div></div>`;
+}
+
+async function showBill(b, fresh) {
+  cur = b; curImg = null;
+  openDlg(b.billNo, '<div class="empty">Creating bill image…</div>');
+  try {
+    $('#host').innerHTML = billHTML(b);
+    const imgs = [...$('#host').querySelectorAll('img')];
+    await Promise.all(imgs.map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+    const canvas = await html2canvas($('#host').firstElementChild, { scale: 2, backgroundColor: '#fff', useCORS: true });
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    curImg = { url: canvas.toDataURL('image/png'), blob };
+    $('#dbody').innerHTML = `<img class="bill" src="${curImg.url}" alt="Bill ${esc(b.billNo)}">
+      <div class="acts" style="flex-wrap:wrap"><button class="btn" data-act="share">Share</button><button class="btn alt" data-act="dl">Download</button>
+      <button class="btn alt" data-act="print">Print</button>${fresh ? '<button class="btn alt" data-act="new">New bill</button>' : ''}</div>`;
+  } catch (e) {
+    $('#dbody').innerHTML = '<div class="empty">Could not create the bill image. Open this page from its web link (not as a local file) and try again.</div>';
+    console.error(e);
+  }
+}
+
+const download = () => { const a = document.createElement('a'); a.href = curImg.url; a.download = cur.billNo + '.png'; a.click(); };
+
+async function share() {
+  const text = `KPR Pickles bill ${cur.billNo} - Total ${rupee(cur.total)}`;
+  const file = new File([curImg.blob], cur.billNo + '.png', { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'KPR Pickles bill', text }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  download(); window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+function printBill() {
+  const w = window.open('', '_blank'); if (!w) return toast('Allow pop-ups to print', true);
+  w.document.write(`<html><head><title>${esc(cur.billNo)}</title><style>@page{margin:8mm}body{margin:0;text-align:center}img{width:100%;max-width:480px}</style></head><body><img src="${curImg.url}"></body></html>`);
+  w.document.close(); setTimeout(() => { w.focus(); w.print(); }, 400);
+}
+
+/* ---------- history ---------- */
+const fromDB = r => ({ billNo: r.bill_no, date: r.bill_date, customer: { name: r.customer_name, phone: r.customer_phone }, notes: r.notes,
+  payment: r.payment, discountLabel: r.discount_label, subtotal: Number(r.subtotal), discountAmount: Number(r.discount_amount), total: Number(r.total),
+  items: r.bill_items.map(i => ({ name: i.name, size: i.size, price: Number(i.price), qty: i.qty })) });
+
+async function openHistory() {
+  if (!sb) return toast('Connect Supabase first (see top of index.html)', true);
+  openDlg('Bill history', '<div class="empty">Loading bills…</div>');
+  const { data, error } = await sb.from('bills').select('*, bill_items(*)').order('bill_date', { ascending: false }).limit(200);
+  if (error) return fail(error);
+  hist = data;
+  $('#dbody').innerHTML = '<input id="hq" type="search" placeholder="Search by bill no, name or phone"><div id="hl"></div>';
+  renderHist();
+}
+function renderHist() {
+  const q = ($('#hq').value || '').toLowerCase();
+  const l = hist.map((r, i) => ({ r, i })).filter(({ r }) => [r.bill_no, r.customer_name, r.customer_phone].join(' ').toLowerCase().includes(q));
+  $('#hl').innerHTML = l.length ? l.map(({ r, i }) => `<button class="hr" data-act="view" data-i="${i}"><span><b>${esc(r.bill_no)}</b><br><span class="mut">${fdate(r.bill_date)}${r.customer_name ? ' · ' + esc(r.customer_name) : ''}</span></span><b>${rupee(r.total)}</b></button>`).join('')
+    : '<div class="empty">No bills found.</div>';
+}
+
+/* ---------- manage products ---------- */
+function renderManage() {
+  $('#dbody').innerHTML = `<form class="row" data-act="addp"><input name="n" placeholder="New pickle name" required><select name="c" style="width:120px"><option value="veg">Veg</option><option value="nonveg">Non-veg</option></select><button class="btn sm">Add</button></form>` +
+    products.map(p => `<div class="mp"><div class="mph"><b>${dot(p.category)} ${esc(p.name)}</b><button class="lnk" data-act="delp" data-id="${esc(p.id)}">Delete</button></div>
+    ${p.packs.map(k => `<div class="row"><span class="sz">${esc(k.size)}</span><input type="number" min="0" value="${k.price}" data-act="price" data-id="${esc(k.id)}" aria-label="Price for ${esc(k.size)}"><button class="lnk" data-act="delk" data-id="${esc(k.id)}">Remove</button></div>`).join('')}
+    <form class="row" data-act="addk" data-id="${esc(p.id)}"><input name="s" placeholder="Pack size, e.g. 2 kg" required><input name="p" type="number" min="0" placeholder="Price" required><button class="btn alt sm">Add pack</button></form></div>`).join('');
+}
+const reloadManage = async () => { await loadProducts(); renderManage(); };
+
+/* ---------- dialog actions ---------- */
+$('#dbody').onclick = async e => {
+  const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'FORM' || b.tagName === 'INPUT') return;
+  const a = b.dataset.act, id = b.dataset.id;
+  if (a === 'share') share(); else if (a === 'dl') download(); else if (a === 'print') printBill();
+  else if (a === 'new') { clearOrder(); $('#dlg').close(); window.scrollTo(0, 0); }
+  else if (a === 'view') showBill(fromDB(hist[b.dataset.i]), false);
+  else if (a === 'delp' && confirm('Delete this pickle and all its packs? Old bills are not affected.')) {
+    const { error } = await sb.from('products').delete().eq('id', id); error ? fail(error) : reloadManage();
+  } else if (a === 'delk') {
+    const { error } = await sb.from('packs').delete().eq('id', id); error ? fail(error) : reloadManage();
+  }
+};
+$('#dbody').onchange = async e => {
+  if (e.target.dataset.act !== 'price') return;
+  const { error } = await sb.from('packs').update({ price: Number(e.target.value) || 0 }).eq('id', e.target.dataset.id);
+  error ? fail(error) : (toast('Price saved'), loadProducts());
+};
+$('#dbody').oninput = e => { if (e.target.id === 'hq') renderHist(); };
+$('#dbody').onsubmit = async e => {
+  e.preventDefault(); const f = e.target, a = f.dataset.act, d = new FormData(f);
+  if (a === 'addp') {
+    const name = d.get('n').trim(), id = slug(name) || 'item-' + Date.now();
+    if (products.some(p => p.id === id)) return toast('That pickle already exists', true);
+    const r1 = await sb.from('products').insert({ id, name, category: d.get('c'), sort_order: products.length + 1 });
+    if (r1.error) return fail(r1.error);
+    const sizes = ['100 g', '250 g', '500 g', '1 kg'];
+    const r2 = await sb.from('packs').insert(sizes.map((s, i) => ({ id: id + '-' + slug(s), product_id: id, size: s, price: 0, sort_order: i + 1 })));
+    if (r2.error) return fail(r2.error);
+    toast('Added. Now set the prices.'); reloadManage();
+  } else if (a === 'addk') {
+    const p = products.find(x => x.id === f.dataset.id), s = d.get('s').trim();
+    const { error } = await sb.from('packs').insert({ id: p.id + '-' + slug(s), product_id: p.id, size: s, price: Number(d.get('p')) || 0, sort_order: p.packs.length + 1 });
+    error ? fail(error) : reloadManage();
+  }
+};
+
+$('#bHist').onclick = openHistory;
+$('#bProd').onclick = () => {
+  if (!sb) return toast('Connect Supabase first (see top of index.html)', true);
+  openDlg('Manage products', ''); renderManage();
+};
+
+/* ---------- start ---------- */
+(async function init() {
+  renderOrder();
+  if (SUPABASE_URL.startsWith('PASTE') || SUPABASE_KEY.startsWith('PASTE')) {
+    $('#prod').innerHTML = '<div class="empty"><b>Supabase is not connected yet.</b><br>Open index.html and paste your Project URL and anon key at the top of the script.</div>';
+    return;
+  }
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  await loadProducts();
+})();
+</script>
+</body>
+</html>
